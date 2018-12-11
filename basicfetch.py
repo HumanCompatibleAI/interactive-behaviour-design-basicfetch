@@ -4,15 +4,17 @@ from gym import Wrapper
 from gym.envs import register as gym_register
 from gym.envs.robotics import utils
 from gym.envs.robotics.robot_env import RobotEnv
+from gym.utils import EzPickle
 from gym.wrappers import FlattenDictWrapper
 
 
-class FetchEnvBasic(RobotEnv):
+class FetchEnvBasic(RobotEnv, EzPickle):
     def __init__(self, target, reward):
         self.target_type = target
         self.reward = reward
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
+        EzPickle.__init__(self)
 
     def get_ctrl_names(self):
         return self.sim.model.actuator_names
