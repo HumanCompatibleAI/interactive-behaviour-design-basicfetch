@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+from gym import Wrapper
 from gym.envs import register as gym_register
 from gym.envs.robotics import utils
 from gym.envs.robotics.robot_env import RobotEnv
@@ -70,10 +71,17 @@ class FetchEnvBasic(RobotEnv):
             'desired_goal': self.goal
         }
 
+class StartWithExplore(Wrapper):
+    def reset(self):
+        self.env.reset()
+        for _ in range(30):
+            obs, reward, done, info = self.env.step(self.env.action_space.sample())
+        return obs
 
 def make_env(target, reward):
     env = FetchEnvBasic(target, reward)
     env = FlattenDictWrapper(env, ['observation'])
+    env = StartWithExplore(env)
     return env
 
 
