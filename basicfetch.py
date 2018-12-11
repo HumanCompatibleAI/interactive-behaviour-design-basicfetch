@@ -7,7 +7,9 @@ from gym.envs.robotics.robot_env import RobotEnv
 
 
 class FetchEnvBasic(RobotEnv):
-    def __init__(self):
+    def __init__(self, target, reward):
+        self.target_type = target
+        self.reward = reward
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
 
@@ -27,34 +29,51 @@ class FetchEnvBasic(RobotEnv):
         return False
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        return 0
+        assert isinstance(achieved_goal, np.float64), type(desired_goal)
+        assert isinstance(desired_goal, float), type(desired_goal)
+        if self.reward == 'sparse':
+            return float(achieved_goal > desired_goal)
+        elif self.reward == 'dense':
+            capped_distance = max(desired_goal - achieved_goal, 0)
+            return -capped_distance
+        else:
+            raise Exception(f"Unknown reward type '{self.reward}'")
 
     def _sample_goal(self):
-        return
+        return 0.8
 
     def _get_obs(self):
-        # gripper unit position
-        grip_pos = self.sim.data.get_site_xpos('grip')
+        # gripper position
+        gripper_pos = self.sim.data.get_site_xpos('grip')
         dt = self.sim.nsubsteps * self.sim.model.opt.timestep
-        grip_velp = self.sim.data.get_site_xvelp('grip') * dt
+        gripper_vel = self.sim.data.get_site_xvelp('grip') * dt
 
         # joint positions and velocities
         robot_qpos, robot_qvel = utils.robot_get_obs(self.sim)
-        # grippers distance and velocity
-        gripper_state = robot_qpos[-2:]
-        gripper_vel = robot_qvel[-2:] * dt
+        # grippers fingers distance and velocity
+        fingers_distance = robot_qpos[-2:]
+        fingers_vel = robot_qvel[-2:] * dt
 
-        obs = np.concatenate([grip_pos, gripper_state, grip_velp, gripper_vel])
+        obs = np.concatenate([gripper_pos, gripper_vel, fingers_distance, fingers_vel])
 
+        if self.target_type == 'up':
+            achieved = gripper_pos[2]
+        elif self.target_type == 'right':
+            achieved = gripper_pos[1]
+        else:
+            raise Exception(f"Unknown target '{self.reward}'")
         return {
             'observation': obs.copy(),
-            'achieved_goal': np.zeros(0),
-            'desired_goal': np.zeros(0)
+            'achieved_goal': achieved,
+            'desired_goal': self.goal
         }
 
 
 def register():
-    gym_register(
-        id='FetchBasic-v0',
-        entry_point=FetchEnvBasic
-    )
+    for reward in ['sparse', 'dense']:
+        for target in ['up', 'right']:
+            gym_register(
+                id=f'FetchBasic{target.capitalize()}{reward.capitalize()}-v0',
+                entry_point=FetchEnvBasic,
+                kwargs={'target': target, 'reward': reward}
+            )
