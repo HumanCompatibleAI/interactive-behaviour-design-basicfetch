@@ -11,4 +11,4 @@ gym = {extras = ["mujoco"], editable = true, ref = "fix_robotenv_rendering", git
 [dev-packages]
 
 [requires]
-python_version = "3.6"
+python_version = "3"
