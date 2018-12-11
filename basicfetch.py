@@ -4,6 +4,7 @@ import numpy as np
 from gym.envs import register as gym_register
 from gym.envs.robotics import utils
 from gym.envs.robotics.robot_env import RobotEnv
+from gym.wrappers import FlattenDictWrapper, Monitor
 
 
 class FetchEnvBasic(RobotEnv):
@@ -30,7 +31,7 @@ class FetchEnvBasic(RobotEnv):
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         assert isinstance(achieved_goal, np.float64), type(desired_goal)
-        assert isinstance(desired_goal, float), type(desired_goal)
+        assert isinstance(desired_goal, np.float64), type(desired_goal)
         if self.reward == 'sparse':
             return float(achieved_goal > desired_goal)
         elif self.reward == 'dense':
@@ -40,7 +41,8 @@ class FetchEnvBasic(RobotEnv):
             raise Exception(f"Unknown reward type '{self.reward}'")
 
     def _sample_goal(self):
-        return 0.8
+        # np.float64 because when training with baselines something wants to call copy()
+        return np.float64(0.8)
 
     def _get_obs(self):
         # gripper position
@@ -69,11 +71,18 @@ class FetchEnvBasic(RobotEnv):
         }
 
 
+def make_env(target, reward):
+    env = FetchEnvBasic(target, reward)
+    env = FlattenDictWrapper(env, ['observation'])
+    return env
+
+
 def register():
     for reward in ['sparse', 'dense']:
         for target in ['up', 'right']:
             gym_register(
                 id=f'FetchBasic{target.capitalize()}{reward.capitalize()}-v0',
-                entry_point=FetchEnvBasic,
+                entry_point=make_env,
+                max_episode_steps=250,
                 kwargs={'target': target, 'reward': reward}
             )
