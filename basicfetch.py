@@ -38,6 +38,8 @@ class FetchEnvBasic(RobotEnv):
         elif self.reward == 'dense':
             capped_distance = max(desired_goal - achieved_goal, 0)
             return -capped_distance
+        elif self.reward == 'max':
+            return achieved_goal
         else:
             raise Exception(f"Unknown reward type '{self.reward}'")
 
@@ -86,7 +88,7 @@ def make_env(target, reward):
 
 
 def register():
-    for reward in ['sparse', 'dense']:
+    for reward in ['sparse', 'dense', 'max']:
         for target in ['up', 'right']:
             gym_register(
                 id=f'FetchBasic{target.capitalize()}{reward.capitalize()}-v0',
