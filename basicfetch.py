@@ -81,7 +81,7 @@ class StartWithExplore(Wrapper):
         return obs
 
     def step(self, action):
-        self.env.step(action)
+        return self.env.step(action)
 
 
 def make_env(target, reward):
