@@ -17,6 +17,25 @@ class FetchEnvBasic(RobotEnv):
     def get_ctrl_names(self):
         return self.sim.model.actuator_names
 
+    # def _env_setup(self, initial_qpos):
+    #     initial_qpos = {
+    #         'slide0': 0.405,
+    #         'slide1': 0.48,
+    #         'slide2': 0.0,
+    #     }
+    #     for name, value in initial_qpos.items():
+    #         self.sim.data.set_joint_qpos(name, value)
+    #     utils.reset_mocap_welds(self.sim)
+    #     self.sim.forward()
+    #
+    #     # Move end effector into position.
+    #     gripper_target = np.array([-0.498, 0.005, -0.431]) + self.sim.data.get_site_xpos('grip')
+    #     gripper_rotation = np.array([1., 0., 1., 0.])
+    #     self.sim.data.set_mocap_pos('mocap', gripper_target)
+    #     self.sim.data.set_mocap_quat('mocap', gripper_rotation)
+    #     for _ in range(10):
+    #         self.sim.step()
+
     def _set_action(self, action):
         assert action.shape == (8,)
         action = np.concatenate([action, [action[-1]]])
