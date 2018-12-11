@@ -33,7 +33,6 @@ class FetchEnvBasic(RobotEnv):
         if self.target_type == 'level':
             assert achieved_goal.shape == (4,), achieved_goal.shape
             assert desired_goal.shape == (4,), desired_goal.shape
-            print(achieved_goal, desired_goal)
             diff = np.linalg.norm(achieved_goal - desired_goal)
             return -diff
         elif self.target_type in ['up', 'right']:
