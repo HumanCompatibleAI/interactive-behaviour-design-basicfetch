@@ -27,7 +27,7 @@ def get_git_rev():
 def make_env():
     env = gym.make(f'FetchBasic{args.env_type}-v0')
     if first_env_semaphore.acquire(timeout=0):
-        env = Monitor(env, video_callable=lambda n: n % 20 == 0, directory=logger.get_dir())
+        env = Monitor(env, video_callable=lambda n: n % 5 == 0, directory=logger.get_dir())
     return env
 
 
