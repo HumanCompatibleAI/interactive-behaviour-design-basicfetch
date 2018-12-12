@@ -52,7 +52,7 @@ register(
 )
 
 baselines.run._game_envs['robotics'].add('E-v0')
-arg_str = f"--alg=ppo2 --env=E-v0 --num_env {args.n_envs} --nsteps 128 --num_timesteps 1e6 --seed {args.seed} "
+arg_str = f"--alg=ppo2 --env=E-v0 --num_env {args.n_envs} --nsteps 128 --num_timesteps 10e6 --seed {args.seed} "
 arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')} --log_interval 3"
 sys.argv = arg_str.split(" ")
 baselines_run_main()
