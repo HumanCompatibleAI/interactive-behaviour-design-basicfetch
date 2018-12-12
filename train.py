@@ -27,7 +27,7 @@ def get_git_rev():
 parser = argparse.ArgumentParser()
 parser.add_argument('dir')
 parser.add_argument('vec')
-parser.add_argument('--n_envs', type=int, default=8)
+parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
 args = parser.parse_args()
 args.dir += '_' + get_git_rev()
