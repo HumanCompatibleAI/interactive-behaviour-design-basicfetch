@@ -40,7 +40,7 @@ first_env_semaphore = multiprocessing.Semaphore()
 
 def make_env():
     env = gym.make(f'FetchBasic-v0')
-    env.r_vec = np.array(np.matrix(args.vec))[0]
+    env.unwrapped.r_vec = np.array(np.matrix(args.vec))[0]
     if first_env_semaphore.acquire(timeout=0):
         env = Monitor(env, video_callable=lambda n: n % 5 == 0, directory=logger.get_dir())
     return env
