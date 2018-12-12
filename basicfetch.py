@@ -55,7 +55,8 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         return False
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        return np.dot(achieved_goal, self.r_vec)
+        rel_pos = np.array(achieved_goal) - np.array([1.3, 0.7, 0.4])
+        return np.dot(rel_pos, self.r_vec)
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
