@@ -3,9 +3,8 @@ import datetime
 import os
 import sys
 
-import gym
+import numpy as np
 import tensorflow as tf
-from gym.envs.registration import register
 
 import baselines
 import basicfetch
@@ -25,7 +24,11 @@ arg_str = f"--alg=ppo2 --env={env_name} --num_env 1 --num_timesteps 0 --load_pat
 sys.argv = arg_str.split(" ")
 baselines_run_main()
 
+with tf.variable_scope("ppo2_model/pi", reuse=True):
+    noise = tf.get_variable('logstd')
 sess = get_session()
+sess.run(noise.assign(np.zeros(noise.shape)))
+
 saver = tf.train.Saver(var_list=tf.trainable_variables())
 now = str(datetime.datetime.now())
 path = os.path.join(args.ckpt_dir, 'policy-{}-{}.ckpt'.format(args.name, now))
