@@ -14,7 +14,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         self.reward = reward
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
-        EzPickle.__init__(self)
+        EzPickle.__init__(self, target, reward)
 
     def get_ctrl_names(self):
         return self.sim.model.actuator_names
