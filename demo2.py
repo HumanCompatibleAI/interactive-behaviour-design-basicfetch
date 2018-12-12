@@ -17,7 +17,7 @@ def read_timeout(timeout=(1 / 30)):
 
 register()
 env = gym.make('FetchBasic-v0').unwrapped  # unwrap past TimeLimit
-env.r_vec = np.array((0, 0, 1))
+env.r_vec = np.array((1, 0, 0))
 np.set_printoptions(1)
 print(env.get_ctrl_names())
 while True:
@@ -38,5 +38,6 @@ while True:
                 print(reward)
                 env.render(mode='human')
                 print('Grippper position:', env.sim.data.get_site_xpos('grip'))
+                print('Reward:', reward)
         except Exception as e:
             print(e)
