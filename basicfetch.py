@@ -58,7 +58,9 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         pos = self.sim.data.get_site_xpos('grip')
 
         e = 0.05
-        left = right = back = front = False
+        above = left = right = back = front = False
+        if pos[2] > 0.42:
+            above = True
         if pos[0] > 1.044 - e and pos[0] < 1.435 + e and pos[1] > 0.4 - e and pos[1] < 0.4 + e:
             left = True
         if pos[0] > 1.044 - e and pos[0] < 1.435 + e and pos[1] > 1.09 - e and pos[1] < 1.09 + e:
@@ -71,13 +73,13 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         if self.reward_type not in ['left', 'right', 'back', 'front', None]:
             raise Exception("Unknown reward type '{}'".format(self.reward_type))
 
-        if self.reward_type == 'left' and left:
+        if self.reward_type == 'left' and left and above:
             return 1.
-        elif self.reward_type == 'right' and right:
+        elif self.reward_type == 'right' and right and above:
             return 1.
-        elif self.reward_type == 'back' and back:
+        elif self.reward_type == 'back' and back and above:
             return 1.
-        elif self.reward_type == 'front' and front:
+        elif self.reward_type == 'front' and front and above:
             return 1.
         else:
             return 0.
