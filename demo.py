@@ -4,7 +4,8 @@ import numpy as np
 from basicfetch import register
 
 register()
-env = gym.make('FetchBasicRightSparse-v0')
+env = gym.make('FetchBasic-v0')
+env.reset()
 action = np.zeros(env.action_space.shape)
 np.set_printoptions(1)
 while True:
