@@ -21,11 +21,9 @@ def run_in_tmux_sess(sess_name, cmd, window_name):
     subprocess.run(tmux_cmd)
 
 
-names = ['left', 'right', 'front', 'back']
-procs = []
 start_tmux_sess_with_cmd('train_subpolicies', 'echo hi')
 for seed in [0, 1, 2]:
-    for name in names:
-        dir = os.path.join(args.runs_dir, 'FetchBasic' + name.capitalize() + str(seed))
-        cmd = f"python train.py '{dir}' '{name}' --seed {seed}"
-        run_in_tmux_sess('train_subpolicies', cmd, name)
+    name = 'level'
+    dir = os.path.join(args.runs_dir, 'FetchBasic' + name.capitalize() + str(seed))
+    cmd = f"python train.py '{dir}' '{name}' --seed {seed}"
+    run_in_tmux_sess('train_subpolicies', cmd, name)
