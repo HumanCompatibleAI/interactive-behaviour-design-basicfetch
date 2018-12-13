@@ -111,8 +111,11 @@ class FetchEnvBasic(RobotEnv, EzPickle):
 class StartWithExplore(Wrapper):
     def reset(self):
         self.env.reset()
-        for _ in range(30):
-            obs, reward, done, info = self.env.step(self.env.action_space.sample())
+        action = np.zeros(self.env.action_space.shape)
+        for _ in range(100):
+            action += np.random.normal(loc=0, scale=0.1, size=self.action_space.shape)
+            action = np.clip(action, -1.0, 1.0)
+            obs, reward, done, info = self.env.step(action)
         return obs
 
     def step(self, action):
