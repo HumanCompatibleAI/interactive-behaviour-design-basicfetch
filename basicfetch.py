@@ -27,6 +27,10 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         for name, value in initial_qpos.items():
             self.sim.data.set_joint_qpos(name, value)
 
+        object_qpos = self.sim.data.get_joint_qpos('object0:joint')
+        object_qpos[:3] = [1.3, 0.75, 0.4]
+        self.sim.data.set_joint_qpos('object0:joint', object_qpos)
+
         # utils.reset_mocap_welds(self.sim)
         # self.sim.forward()
         #
