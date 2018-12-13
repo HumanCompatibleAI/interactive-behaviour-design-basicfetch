@@ -10,7 +10,7 @@ from gym.wrappers import FlattenDictWrapper
 
 class FetchEnvBasic(RobotEnv, EzPickle):
     def __init__(self):
-        self.r_vec = np.array([0, 0, 0])
+        self.reward_type = None
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
         EzPickle.__init__(self)
@@ -55,8 +55,29 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         return False
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        rel_pos = np.array(achieved_goal) - np.array([1.3, 0.7, 0.4])
-        return np.dot(rel_pos, self.r_vec)
+        pos = self.sim.data.get_site_xpos('grip')
+
+        e = 0.05
+        left = right = back = front = False
+        if pos[0] > 1.044 - e and pos[0] < 1.435 + e and pos[1] > 0.4 - e and pos[1] < 0.4 + e:
+            left = True
+        if pos[0] > 1.044 - e and pos[0] < 1.435 + e and pos[1] > 1.09 - e and pos[1] < 1.09 + e:
+            right = True
+        if pos[0] > 1.023 - e and pos[0] < 1.023 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e:
+            back = True
+        if pos[0] > 1.5 - e and pos[0] < 1.5 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e:
+            front = True
+
+        if self.reward_type == 'left' and left:
+            return 1.
+        elif self.reward_type == 'right' and right:
+            return 1.
+        elif self.reward_type == 'back' and back:
+            return 1.
+        elif self.reward_type == 'front' and front:
+            return 1.
+        else:
+            return 0.
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
