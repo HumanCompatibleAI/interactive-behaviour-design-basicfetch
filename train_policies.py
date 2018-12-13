@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
+
 import argparse
 import os
 import subprocess
-
-from tmuxprocess import TmuxProcess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('runs_dir')
@@ -22,11 +21,10 @@ def run_in_tmux_sess(sess_name, cmd, window_name):
     subprocess.run(tmux_cmd)
 
 
-names = ['up', 'down', 'left', 'right', 'forward', 'backward']
-vecs = ['0 0 1', '0 0 -1', '1 0 0', '-1 0 0', '0 1 0', '0 -1 0']
+names = ['left', 'right', 'front', 'back']
 procs = []
 start_tmux_sess_with_cmd('train_subpolicies', 'echo hi')
-for name, vec in zip(names, vecs):
+for name in names:
     dir = os.path.join(args.runs_dir, 'FetchBasic' + name.capitalize())
-    cmd = f"python train.py '{dir}' '{vec}'"
+    cmd = f"python train.py '{dir}' '{name}'"
     run_in_tmux_sess('train_subpolicies', cmd, name)
