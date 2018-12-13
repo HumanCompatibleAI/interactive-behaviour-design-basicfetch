@@ -26,7 +26,6 @@ procs = []
 start_tmux_sess_with_cmd('train_subpolicies', 'echo hi')
 for seed in [0, 1, 2]:
     for name in names:
-        name += str(seed)
-        dir = os.path.join(args.runs_dir, 'FetchBasic' + name.capitalize())
+        dir = os.path.join(args.runs_dir, 'FetchBasic' + name.capitalize() + str(seed))
         cmd = f"python train.py '{dir}' '{name}' --seed {seed}"
         run_in_tmux_sess('train_subpolicies', cmd, name)
