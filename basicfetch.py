@@ -68,6 +68,9 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         if pos[0] > 1.5 - e and pos[0] < 1.5 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e:
             front = True
 
+        if self.reward_type not in ['left', 'right', 'back', 'front', None]:
+            raise Exception("Unknown reward type '{}'".format(self.reward_type))
+
         if self.reward_type == 'left' and left:
             return 1.
         elif self.reward_type == 'right' and right:
