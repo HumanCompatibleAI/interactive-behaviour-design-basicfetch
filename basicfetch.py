@@ -57,7 +57,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
     def compute_reward(self, achieved_goal, desired_goal, info):
         if self.reward_type == 'level':
             quat = self.sim.data.get_body_xquat('gripper_link')
-            if all(np.isclose(quat, [1, 0, 1, 0], atol=0.5)):
+            if all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)):
                 return 1
             else:
                 return 0
