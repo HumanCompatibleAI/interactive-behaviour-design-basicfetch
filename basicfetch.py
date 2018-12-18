@@ -61,13 +61,13 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         else:
             level_reward = 0
 
-        if self.reward_type == 'left':
+        if self.reward_type == 'forward':
             r_vec = [1, 0, 0]
-        elif self.reward_type == 'right':
-            r_vec = [-1, 0, 0]
-        elif self.reward_type == 'forward':
-            r_vec = [0, 1, 0]
         elif self.reward_type == 'backward':
+            r_vec = [-1, 0, 0]
+        elif self.reward_type == 'right':
+            r_vec = [0, 1, 0]
+        elif self.reward_type == 'left':
             r_vec = [0, -1, 0]
         elif self.reward_type == 'up':
             r_vec = [0, 0, 1]
@@ -81,7 +81,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         pos_reward = np.dot(pos, r_vec)
 
         # assuming pos_reward has a scale of about 1, and level_reward also 0/1, so should be balanced
-        return level_reward + pos_reward
+        return level_reward + 0.1 * pos_reward
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
