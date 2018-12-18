@@ -26,7 +26,7 @@ def get_git_rev():
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dir')
-parser.add_argument('reward_type', choices=['left', 'right', 'back', 'front', 'level'])
+parser.add_argument('reward_type')
 parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
 args = parser.parse_args()

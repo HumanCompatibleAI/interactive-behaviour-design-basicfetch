@@ -55,41 +55,33 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         return False
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        if self.reward_type == 'level':
-            quat = self.sim.data.get_body_xquat('gripper_link')
-            if all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)):
-                return 1
-            else:
-                return 0
+        quat = self.sim.data.get_body_xquat('gripper_link')
+        if all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)):
+            level_reward = 1
+        else:
+            level_reward = 0
+
+        if self.reward_type == 'left':
+            r_vec = [1, 0, 0]
+        elif self.reward_type == 'right':
+            r_vec = [-1, 0, 0]
+        elif self.reward_type == 'forward':
+            r_vec = [0, 1, 0]
+        elif self.reward_type == 'backward':
+            r_vec = [0, -1, 0]
+        elif self.reward_type == 'up':
+            r_vec = [0, 0, 1]
+        elif self.reward_type == 'down':
+            r_vec = [0, 0, -1]
+        else:
+            raise Exception("Unknown reward type", self.reward_type)
 
         pos = self.sim.data.get_site_xpos('grip')
 
-        e = 0.05
-        above = left = right = back = front = False
-        if pos[2] > 0.42:
-            above = True
-        if pos[0] > 1.044 - e and pos[0] < 1.435 + e and pos[1] > 0.4 - e and pos[1] < 0.4 + e:
-            left = True
-        if pos[0] > 1.044 - e and pos[0] < 1.435 + e and pos[1] > 1.09 - e and pos[1] < 1.09 + e:
-            right = True
-        if pos[0] > 1.023 - e and pos[0] < 1.023 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e:
-            back = True
-        if pos[0] > 1.5 - e and pos[0] < 1.5 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e:
-            front = True
+        pos_reward = np.dot(pos, r_vec)
 
-        if self.reward_type not in ['left', 'right', 'back', 'front', None]:
-            raise Exception("Unknown reward type '{}'".format(self.reward_type))
-
-        if self.reward_type == 'left' and left and above:
-            return 1.
-        elif self.reward_type == 'right' and right and above:
-            return 1.
-        elif self.reward_type == 'back' and back and above:
-            return 1.
-        elif self.reward_type == 'front' and front and above:
-            return 1.
-        else:
-            return 0.
+        # assuming pos_reward has a scale of about 1, and level_reward also 0/1, so should be balanced
+        return level_reward + pos_reward
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
