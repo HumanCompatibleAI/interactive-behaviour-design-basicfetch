@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import os
 from gym import Wrapper
@@ -14,6 +16,12 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
         EzPickle.__init__(self)
+        self.n_steps = 0
+
+    def step(self, action):
+        obs, reward, done, info = RobotEnv.step(self, action)
+        self.n_steps += 1
+        return obs, reward, done, info
 
     def get_ctrl_names(self):
         return self.sim.model.actuator_names
@@ -54,6 +62,11 @@ class FetchEnvBasic(RobotEnv, EzPickle):
     def _is_success(self, achieved_goal, desired_goal):
         return False
 
+    @staticmethod
+    def slope(x, a, b):
+        assert b > a
+        return np.clip((x - a) / (b - a), 0, 1)
+
     def compute_reward(self, achieved_goal, desired_goal, info):
         quat = self.sim.data.get_body_xquat('gripper_link')
         if all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)):
@@ -75,13 +88,19 @@ class FetchEnvBasic(RobotEnv, EzPickle):
             r_vec = [0, 0, -1]
         else:
             raise Exception("Unknown reward type", self.reward_type)
-
         pos = self.sim.data.get_site_xpos('grip')
-
         pos_reward = np.dot(pos, r_vec)
 
-        # assuming pos_reward has a scale of about 1, and level_reward also 0/1, so should be balanced
-        return level_reward + 0.1 * pos_reward
+        pos_reward_mix_start_nsteps = int(1e4)
+        pos_reward_mix_end_nsteps = int(2e4)
+        if self.n_steps == pos_reward_mix_start_nsteps:
+            print("Starting to add pos reward at", time.time())
+        if self.n_steps == pos_reward_mix_end_nsteps:
+            print("Finished adding pos reward at", time.time())
+        frac = self.slope(self.n_steps, pos_reward_mix_start_nsteps, pos_reward_mix_end_nsteps)
+        reward = level_reward + frac * pos_reward
+
+        return reward
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
