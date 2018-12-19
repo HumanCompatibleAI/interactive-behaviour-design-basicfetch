@@ -10,7 +10,7 @@ from gym.wrappers import FlattenDictWrapper
 
 class FetchEnvBasic(RobotEnv, EzPickle):
     def __init__(self):
-        self.reward_type = None
+        self.reward_type = 'up'
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
         EzPickle.__init__(self)
