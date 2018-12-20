@@ -17,11 +17,11 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
         EzPickle.__init__(self)
         self.n_steps = 0
+        self.frac = 0
 
     def step(self, action):
         obs, reward, done, info = RobotEnv.step(self, action)
         self.n_steps += 1
-        self.frac = 0
         return obs, reward, done, info
 
     def get_ctrl_names(self):
