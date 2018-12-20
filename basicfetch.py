@@ -21,6 +21,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
     def step(self, action):
         obs, reward, done, info = RobotEnv.step(self, action)
         self.n_steps += 1
+        self.frac = 0
         return obs, reward, done, info
 
     def get_ctrl_names(self):
@@ -62,11 +63,6 @@ class FetchEnvBasic(RobotEnv, EzPickle):
     def _is_success(self, achieved_goal, desired_goal):
         return False
 
-    @staticmethod
-    def slope(x, a, b):
-        assert b > a
-        return np.clip((x - a) / (b - a), 0, 1)
-
     def compute_reward(self, achieved_goal, desired_goal, info):
         quat = self.sim.data.get_body_xquat('gripper_link')
         if all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)):
@@ -91,14 +87,11 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         pos = self.sim.data.get_site_xpos('grip')
         pos_reward = np.dot(pos, r_vec)
 
-        pos_reward_mix_start_nsteps = int(1e4)
-        pos_reward_mix_end_nsteps = int(2e4)
-        if self.n_steps == pos_reward_mix_start_nsteps:
-            print("Starting to add pos reward at", time.time())
-        if self.n_steps == pos_reward_mix_end_nsteps:
-            print("Finished adding pos reward at", time.time())
-        frac = self.slope(self.n_steps, pos_reward_mix_start_nsteps, pos_reward_mix_end_nsteps)
-        reward = level_reward + frac * pos_reward
+        if self.n_steps % 1e5 == 0:
+            print("Incrementing frac at", time.time())
+            self.frac += 0.1
+            print("Now", self.frac)
+        reward = level_reward + self.frac * pos_reward
 
         return reward
 
