@@ -91,7 +91,16 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         pos = self.sim.data.get_site_xpos('grip')
         pos_reward = np.dot(pos, r_vec)
 
-        return pos_reward * level_reward
+        pos_reward_mix_start_nsteps = int(1e4)
+        pos_reward_mix_end_nsteps = int(2e4)
+        if self.n_steps == pos_reward_mix_start_nsteps:
+            print("Starting to add pos reward at", time.time())
+        if self.n_steps == pos_reward_mix_end_nsteps:
+            print("Finished adding pos reward at", time.time())
+        frac = self.slope(self.n_steps, pos_reward_mix_start_nsteps, pos_reward_mix_end_nsteps)
+        reward = level_reward + frac * pos_reward
+
+        return reward
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
