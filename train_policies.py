@@ -16,7 +16,7 @@ def start_tmux_sess_with_cmd(sess_name, cmd):
 
 
 def run_in_tmux_sess(sess_name, cmd, window_name):
-    cmd += '; echo; read -p "Press enter to exit..."'
+    cmd += '; echo; read -p "DONT CLOSE ME check whether frac incremented"'
     tmux_cmd = ['tmux', 'new-window', '-ad', '-t', f'{sess_name}-main', '-n', window_name, cmd]
     subprocess.run(tmux_cmd)
 

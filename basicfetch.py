@@ -18,6 +18,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         EzPickle.__init__(self)
         self.n_steps = 0
         self.frac = 0
+        self.t = time.time()
 
     def step(self, action):
         obs, reward, done, info = RobotEnv.step(self, action)
@@ -87,8 +88,9 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         pos = self.sim.data.get_site_xpos('grip')
         pos_reward = np.dot(pos, r_vec)
 
-        if self.n_steps % 1e5 == 0:
+        if time.time() - self.t > (20 * 60):
             print("Incrementing frac at", time.time())
+            self.t = time.time()
             self.frac += 0.1
             print("Now", self.frac)
         reward = level_reward + self.frac * pos_reward
