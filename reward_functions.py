@@ -20,4 +20,4 @@ reward_function_dict['table_edges']['right'] = lambda quat, pos: float(above_tab
 reward_function_dict['table_edges']['back'] = lambda quat, pos: float(above_table(pos) and pos[0] > 1.023 - e and pos[0] < 1.023 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e)
 reward_function_dict['table_edges']['front'] = lambda quat, pos: float(above_table(pos) and pos[0] > 1.5 - e and pos[0] < 1.5 + e and pos[1] > 0.402 - e and pos[1] < 1.101 + e)
 
-reward_function_dict['orientation_only'] = lambda quat, pos: float(all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)))
+reward_function_dict['orientation'] = lambda quat, pos: float(all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)))
