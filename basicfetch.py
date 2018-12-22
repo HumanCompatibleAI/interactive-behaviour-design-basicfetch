@@ -6,6 +6,8 @@ from gym.envs.robotics.robot_env import RobotEnv
 from gym.utils import EzPickle
 from gym.wrappers import FlattenDictWrapper
 
+from reward_functions import reward_function_dict
+
 
 class FetchEnvBasic(RobotEnv, EzPickle):
     def __init__(self):
@@ -16,7 +18,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
                           n_actions=8,    # 8 actuators
                           initial_qpos=None)
         EzPickle.__init__(self)
-        self.reward_func = None
+        self.reward_func = reward_function_dict['dummy']
 
     def get_ctrl_names(self):
         return self.sim.model.actuator_names
