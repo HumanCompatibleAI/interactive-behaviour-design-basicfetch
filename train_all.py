@@ -31,8 +31,10 @@ for reward_type, x in reward_function_dict.items():
         for reward_subtype, _ in x.items():
             reward_types.append(reward_type + '.' + reward_subtype)
 
-start_tmux_sess_with_cmd('fetchbasic', 'read -p "Dummy window; press enter to exit: "')
-for reward_type in reward_types:
-    run_dir = os.path.join(args.runs_dir, 'FetchBasic' + reward_type)
-    cmd = f"python train_single.py '{run_dir}' '{reward_type}'"
-    run_in_tmux_sess('fetchbasic', cmd, reward_type)
+start_tmux_sess_with_cmd('fetchbasic', 'echo "Dummy window"')
+for seed in [0, 1, 2]:
+    for reward_type in reward_types:
+        run_name = 'FetchBasic-' + reward_type + str(seed)
+        run_dir = os.path.join(args.runs_dir, run_name)
+        cmd = f"python train_single.py '{run_dir}' '{reward_type}' --seed {seed}"
+        run_in_tmux_sess('fetchbasic', cmd, reward_type + str(seed))
