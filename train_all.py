@@ -33,8 +33,8 @@ for reward_type, x in reward_function_dict.items():
 
 start_tmux_sess_with_cmd('fetchbasic', 'echo "Dummy window"')
 for seed in [0, 1, 2]:
-    for reward_type in reward_types:
-        run_name = 'FetchBasic-' + reward_type + str(seed)
+    for noise_type in ['adaptive-param_0.2', 'ou_0.2']:
+        run_name = 'FetchBasic-orientation_and_up-' + noise_type + '-' + str(seed)
         run_dir = os.path.join(args.runs_dir, run_name)
-        cmd = f"python train_single.py '{run_dir}' '{reward_type}' --seed {seed}"
-        run_in_tmux_sess('fetchbasic', cmd, reward_type + str(seed))
+        cmd = f"python train_single.py '{run_dir}' 'orientation direction.up' --seed {seed} --args '--noise_type {noise_type}'"
+        run_in_tmux_sess('fetchbasic', cmd, str(seed))

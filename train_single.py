@@ -40,6 +40,7 @@ parser.add_argument('reward_spec')
 parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
 parser.add_argument('--ckpt')
+parser.add_argument('--args')
 args = parser.parse_args()
 args.dir += '_' + get_git_rev()
 os.environ["OPENAI_LOGDIR"] = args.dir
@@ -86,5 +87,8 @@ baselines.run._game_envs['robotics'].add('E-v0')
 # 1e6 is about an hour
 arg_str = f"--alg=ddpg --env=E-v0 --num_timesteps 1e6 --seed {args.seed} "
 arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')}"
+if args.args is not None:
+    arg_str += ' ' + args.args
+print(arg_str)
 sys.argv = [sys.argv[0]] + arg_str.split(" ")
 baselines_run_main()
