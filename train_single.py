@@ -84,8 +84,7 @@ register(
 baselines.run._game_envs['robotics'].add('E-v0')
 # 1e5 total timesteps on 16 workers is about 5 minutes
 # 1e6 is about an hour
-arg_str = f"--alg=ddpg --env=E-v0 --num_timesteps 1e6 --seed {args.seed} "
-arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')} --log_interval 3 --save_interval 10"
-arg_str += f" --load_path {args.ckpt}"
+arg_str = f"--alg=ddpg --env=E-v0 --num_env 16 --num_timesteps 1e6 --seed {args.seed} "
+arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')}"
 sys.argv = [sys.argv[0]] + arg_str.split(" ")
 baselines_run_main()
