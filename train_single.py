@@ -29,6 +29,7 @@ parser.add_argument('dir')
 parser.add_argument('reward_type')
 parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
+parser.add_argument('--ckpt')
 args = parser.parse_args()
 args.dir += '_' + get_git_rev()
 os.environ["OPENAI_LOGDIR"] = args.dir
@@ -46,7 +47,7 @@ def make_env():
     assert callable(reward_function)
     env.unwrapped.reward_func = reward_function
     if first_env_semaphore.acquire(timeout=0):
-        env = Monitor(env, video_callable=lambda n: n % 10 == 0, directory=logger.get_dir())
+        env = Monitor(env, video_callable=lambda n: n % 5 == 0, directory=logger.get_dir())
     return env
 
 
@@ -60,5 +61,6 @@ baselines.run._game_envs['robotics'].add('E-v0')
 # 1e6 is about an hour
 arg_str = f"--alg=ppo2 --env=E-v0 --num_env {args.n_envs} --nsteps 128 --num_timesteps 1e6 --seed {args.seed} "
 arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')} --log_interval 3 --save_interval 10"
+arg_str += f" --load_path {args.ckpt}"
 sys.argv = arg_str.split(" ")
 baselines_run_main()
