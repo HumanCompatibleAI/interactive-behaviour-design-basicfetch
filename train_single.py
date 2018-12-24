@@ -1,8 +1,10 @@
 import argparse
 import multiprocessing
+import operator
 import os
 import subprocess
 import sys
+from functools import reduce
 
 import gym
 from gym.envs.registration import register
@@ -26,7 +28,7 @@ def get_git_rev():
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dir')
-parser.add_argument('reward_type')
+parser.add_argument('reward_spec')
 parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
 parser.add_argument('--ckpt')
@@ -39,13 +41,28 @@ basicfetch.register()
 first_env_semaphore = multiprocessing.Semaphore()
 
 
-def make_env():
-    env = gym.make(f'FetchBasic-v0')
+def get_reward_function(name):
     reward_function = reward_function_dict
-    for t in args.reward_type.split('.'):
+    for t in name.split('.'):
         reward_function = reward_function[t]
     assert callable(reward_function)
-    env.unwrapped.reward_func = reward_function
+    return reward_function
+
+
+def construct_reward_function():
+    funcs = []
+    for name in args.reward_spec.split(' '):
+        funcs.append(get_reward_function(name))
+
+    def f(quat, pos):
+        return reduce(operator.mul, [f(quat, pos) for f in funcs])
+
+    return f
+
+
+def make_env():
+    env = gym.make(f'FetchBasic-v0')
+    env.unwrapped.reward_func = construct_reward_function()
     if first_env_semaphore.acquire(timeout=0):
         env = Monitor(env, video_callable=lambda n: n % 5 == 0, directory=logger.get_dir())
     return env
