@@ -26,8 +26,8 @@ def get_git_rev():
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dir')
-parser.add_argument('vec')
-parser.add_argument('--n_envs', type=int, default=8)
+parser.add_argument('reward_type')
+parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
 args = parser.parse_args()
 args.dir += '_' + get_git_rev()
@@ -40,7 +40,7 @@ first_env_semaphore = multiprocessing.Semaphore()
 
 def make_env():
     env = gym.make(f'FetchBasic-v0')
-    env.r_vec = np.array(np.matrix(args.vec))[0]
+    env.unwrapped.reward_type = args.reward_type
     if first_env_semaphore.acquire(timeout=0):
         env = Monitor(env, video_callable=lambda n: n % 5 == 0, directory=logger.get_dir())
     return env
@@ -52,7 +52,7 @@ register(
 )
 
 baselines.run._game_envs['robotics'].add('E-v0')
-arg_str = f"--alg=ppo2 --env=E-v0 --num_env {args.n_envs} --nsteps 128 --num_timesteps 1e5 --seed {args.seed} "
-arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')}"
+arg_str = f"--alg=ppo2 --env=E-v0 --num_env {args.n_envs} --nsteps 128 --num_timesteps 1e6 --seed {args.seed} "
+arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')} --log_interval 3"
 sys.argv = arg_str.split(" ")
 baselines_run_main()

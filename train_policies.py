@@ -1,21 +1,28 @@
 #!/usr/bin/env python3
+
 import argparse
 import os
 import subprocess
-from multiprocessing import Process
-
-from tmuxprocess import TmuxProcess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('runs_dir')
 args = parser.parse_args()
 
-names = ['up', 'down', 'left', 'right', 'forward', 'backward']
-vecs = ['0 0 1', '0 0 -1', '1 0 0', '-1 0 0', '0 1 0', '0 -1 0']
-procs = []
-for name, vec in zip(names, vecs):
+
+def start_tmux_sess_with_cmd(sess_name, cmd):
+    cmd += '; echo; read -p "Press enter to exit..."'
+    cmd = ['tmux', 'new-sess', '-d', '-s', sess_name, '-n', f'{sess_name}-main', cmd]
+    subprocess.run(cmd)
+
+
+def run_in_tmux_sess(sess_name, cmd, window_name):
+    cmd += '; echo; read -p "Press enter to exit..."'
+    tmux_cmd = ['tmux', 'new-window', '-ad', '-t', f'{sess_name}-main', '-n', window_name, cmd]
+    subprocess.run(tmux_cmd)
+
+
+start_tmux_sess_with_cmd('train_subpolicies', 'echo hi')
+for name in ['up', 'down', 'left', 'right', 'forward', 'backward']:
     dir = os.path.join(args.runs_dir, 'FetchBasic' + name.capitalize())
-    p = TmuxProcess(target=subprocess.run, args=[['python', 'train.py', dir, vec]])
-    p.start()
-    procs.append(p)
-subprocess.run(f'tmux attach -t {procs[0].tmux_sess}'.split(' '))
+    cmd = f"python train.py '{dir}' '{name}'"
+    run_in_tmux_sess('train_subpolicies', cmd, name)

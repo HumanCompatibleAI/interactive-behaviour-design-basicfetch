@@ -10,7 +10,7 @@ from gym.wrappers import FlattenDictWrapper
 
 class FetchEnvBasic(RobotEnv, EzPickle):
     def __init__(self):
-        self.r_vec = np.array([0, 0, 0])
+        self.reward_type = 'up'
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self, model_path=model_path, n_substeps=20, n_actions=8, initial_qpos=None)
         EzPickle.__init__(self)
@@ -55,7 +55,33 @@ class FetchEnvBasic(RobotEnv, EzPickle):
         return False
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        return np.dot(achieved_goal, self.r_vec)
+        quat = self.sim.data.get_body_xquat('gripper_link')
+        if all(np.isclose(quat, [np.sqrt(0.5), 0, np.sqrt(0.5), 0], atol=0.1)):
+            level_reward = 1
+        else:
+            level_reward = 0
+
+        if self.reward_type == 'forward':
+            r_vec = [1, 0, 0]
+        elif self.reward_type == 'backward':
+            r_vec = [-1, 0, 0]
+        elif self.reward_type == 'right':
+            r_vec = [0, 1, 0]
+        elif self.reward_type == 'left':
+            r_vec = [0, -1, 0]
+        elif self.reward_type == 'up':
+            r_vec = [0, 0, 1]
+        elif self.reward_type == 'down':
+            r_vec = [0, 0, -1]
+        else:
+            raise Exception("Unknown reward type", self.reward_type)
+
+        pos = self.sim.data.get_site_xpos('grip')
+
+        pos_reward = np.dot(pos, r_vec)
+
+        # assuming pos_reward has a scale of about 1, and level_reward also 0/1, so should be balanced
+        return level_reward + 0.1 * pos_reward
 
     def _sample_goal(self):
         return np.array((0, 0, 0))
@@ -84,8 +110,11 @@ class FetchEnvBasic(RobotEnv, EzPickle):
 class StartWithExplore(Wrapper):
     def reset(self):
         self.env.reset()
-        for _ in range(30):
-            obs, reward, done, info = self.env.step(self.env.action_space.sample())
+        action = np.zeros(self.env.action_space.shape)
+        for _ in range(100):
+            action += np.random.normal(loc=0, scale=0.1, size=self.action_space.shape)
+            action = np.clip(action, -1.0, 1.0)
+            obs, reward, done, info = self.env.step(action)
         return obs
 
     def step(self, action):
