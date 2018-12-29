@@ -40,7 +40,6 @@ parser.add_argument('reward_spec')
 parser.add_argument('--n_envs', type=int, default=16)
 parser.add_argument('--seed', type=int, default=0)
 parser.add_argument('--ckpt')
-parser.add_argument('--args')
 args = parser.parse_args()
 args.dir += '_' + get_git_rev()
 os.environ["OPENAI_LOGDIR"] = args.dir
@@ -85,10 +84,8 @@ register(
 baselines.run._game_envs['robotics'].add('E-v0')
 # 1e5 total timesteps on 16 workers is about 5 minutes
 # 1e6 is about an hour
-arg_str = f"--alg=ddpg --env=E-v0 --num_timesteps 1e6 --seed {args.seed} "
-arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')}"
-if args.args is not None:
-    arg_str += ' ' + args.args
-print(arg_str)
-sys.argv = [sys.argv[0]] + arg_str.split(" ")
+arg_str = f"--alg=ppo2 --env=E-v0 --num_env {args.n_envs} --nsteps 128 --num_timesteps 1e6 --seed {args.seed} "
+arg_str += f"--save_path {os.path.join(args.dir, 'saved_model')} --log_interval 3 --save_interval 10"
+arg_str += f" --load_path {args.ckpt}"
+sys.argv = arg_str.split(" ")
 baselines_run_main()
