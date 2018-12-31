@@ -4,14 +4,15 @@ import gym
 import numpy as np
 
 from basicfetch import register
+from reward_functions import reward_function_dict
 
 # noinspection PyStatementEffect
 readline
 
 register()
 env = gym.make('FetchBasic-v0').unwrapped  # unwrap past TimeLimit
-env.r_vec = np.array((1, 0, 0))
-np.set_printoptions(1)
+env.unwrapped.reward_func = reward_function_dict['goal']['up']
+np.set_printoptions(2)
 print(env.get_ctrl_names())
 while True:
     command = input()
