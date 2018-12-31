@@ -7,12 +7,13 @@ def goal_direction(dir_vector):
     def f(quat, pos):
         nonlocal last_pos
         if last_pos is None:
-            last_pos = pos
+            last_pos = np.copy(pos)
             return 0.
         desired_pos = np.array(last_pos) + np.array(dir_vector)
         actual_pos = np.array(pos)
-        reward = np.linalg.norm(desired_pos - actual_pos) ** 2
-        last_pos = pos
+        squared_distance = np.linalg.norm(desired_pos - actual_pos) ** 2
+        reward = -squared_distance
+        last_pos = np.copy(pos)
         return reward
 
     return f
@@ -30,10 +31,10 @@ v = {
     'up': [0, 0, 1],
     'down': [0, 0, -1]
 }
-reward_function_dict['direction'] = {}
+# reward_function_dict['direction'] = {}
 reward_function_dict['goal'] = {}
 for dir_name, dir_vector in v.items():
-    reward_function_dict['direction'][dir_name] = lambda quat, pos: np.dot(pos, dir_vector)
+    # reward_function_dict['direction'][dir_name] = lambda quat, pos: np.dot(pos, dir_vector)
     reward_function_dict['goal'][dir_name] = goal_direction(dir_vector)
 
 # reward_function_dict['direction'] = {}
