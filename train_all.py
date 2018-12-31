@@ -25,6 +25,8 @@ def run_in_tmux_sess(sess_name, cmd, window_name):
 
 reward_types = []
 for reward_type, x in reward_function_dict.items():
+    if reward_type == 'dummy':
+        continue
     if callable(x):
         reward_types.append(reward_type)
     elif type(x) is dict:
