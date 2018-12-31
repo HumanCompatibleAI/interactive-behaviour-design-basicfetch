@@ -1,9 +1,6 @@
 import os
 import random
-if random.random() < 0.5:
-    d = '1'
-else:
-    d = '0'
+d = '1'
 os.environ['CUDA_VISIBLE_DEVICES'] = d
 
 import argparse
