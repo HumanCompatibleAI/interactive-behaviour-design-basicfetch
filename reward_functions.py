@@ -24,12 +24,12 @@ reward_function_dict = {}
 reward_function_dict['dummy'] = lambda quat, pos: 0.0
 
 v = {
-    'left': [0, -1, 0],
-    'right': [0, 1, 0],
-    'forward': [1, 0, 0],
-    'backward': [-1, 0, 0],
-    'up': [0, 0, 1],
-    'down': [0, 0, -1]
+    'left': [0, -0.1, 0],
+    'right': [0, 0.1, 0],
+    'forward': [0.1, 0, 0],
+    'backward': [-0.1, 0, 0],
+    'up': [0, 0, 0.1],
+    'down': [0, 0, -0.1]
 }
 # reward_function_dict['direction'] = {}
 reward_function_dict['goal'] = {}
