@@ -54,12 +54,12 @@ v = {
 }
 # reward_function_dict['direction'] = {}
 # reward_function_dict['goal'] = {}
-reward_function_dict['cosangle'] = {}
+# reward_function_dict['cosangle'] = {}
 reward_function_dict['cosanglelimit'] = {}
 for dir_name, dir_vector in v.items():
     # reward_function_dict['direction'][dir_name] = lambda quat, pos: np.dot(pos, dir_vector)
     # reward_function_dict['goal'][dir_name] = goal_direction(dir_vector)
-    reward_function_dict['cosangle'][dir_name] = cos_angle(dir_vector)
+    # reward_function_dict['cosangle'][dir_name] = cos_angle(dir_vector)
     reward_function_dict['cosanglelimit'][dir_name] = cos_angle(dir_vector,
                                                                 limit_degrees=10)
 
