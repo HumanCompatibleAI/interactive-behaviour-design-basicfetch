@@ -19,6 +19,26 @@ def goal_direction(dir_vector):
     return f
 
 
+def cos_angle(dir_vector, limit_degrees=None):
+    last_pos = None
+
+    def f(quat, pos):
+        nonlocal last_pos
+        if last_pos is None:
+            last_pos = np.copy(pos)
+            return 0.
+        vec = np.array(pos) - np.array(last_pos)
+        cos = np.dot(vec, dir_vector) / (np.linalg.norm(vec) * np.linalg.norm(dir_vector))
+        reward = cos
+        if limit_degrees is not None:
+            if cos < np.cos(limit_degrees / 180 * np.pi):
+                reward = 0.
+        last_pos = np.copy(pos)
+        return reward
+
+    return f
+
+
 reward_function_dict = {}
 
 reward_function_dict['dummy'] = lambda quat, pos: 0.0
@@ -32,10 +52,15 @@ v = {
     'down': [0, 0, -1]
 }
 # reward_function_dict['direction'] = {}
-reward_function_dict['goal'] = {}
+# reward_function_dict['goal'] = {}
+reward_function_dict['cosangle'] = {}
+reward_function_dict['cosanglelimit'] = {}
 for dir_name, dir_vector in v.items():
     # reward_function_dict['direction'][dir_name] = lambda quat, pos: np.dot(pos, dir_vector)
-    reward_function_dict['goal'][dir_name] = goal_direction(dir_vector)
+    # reward_function_dict['goal'][dir_name] = goal_direction(dir_vector)
+    reward_function_dict['cosangle'][dir_name] = cos_angle(dir_vector)
+    reward_function_dict['cosanglelimit'][dir_name] = cos_angle(dir_vector,
+                                                                limit_degrees=10)
 
 # reward_function_dict['table_edges'] = {}
 # above_table = lambda pos: pos[2] > 0.42
