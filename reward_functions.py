@@ -31,7 +31,8 @@ def cos_angle(dir_vector, limit_degrees=None):
         cos = np.dot(vec, dir_vector) / (np.linalg.norm(vec) * np.linalg.norm(dir_vector))
         reward = cos
         if limit_degrees is not None:
-            if cos < np.cos(limit_degrees / 180 * np.pi):
+            # Make sure we still penalise for going backward
+            if reward > 0 and cos < np.cos(limit_degrees / 180 * np.pi):
                 reward = 0.
         last_pos = np.copy(pos)
         return reward
