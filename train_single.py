@@ -1,6 +1,6 @@
 import os
 import random
-if random.random < 0.5:
+if random.random() < 0.5:
     d = '0'
 else:
     d = '1'
