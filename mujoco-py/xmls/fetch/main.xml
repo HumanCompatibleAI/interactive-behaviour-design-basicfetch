@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mujoco>
-	<actuator>
-		<position ctrllimited="true" ctrlrange="-1.6056 1.6056" joint="shoulder_pan_joint" kp="100" name="shoulder_pan_joint"></position>
-		<position ctrllimited="true" ctrlrange="-1.221 1.518" joint="shoulder_lift_joint" kp="100" name="shoulder_lift_joint"></position>
-		<position ctrllimited="true" ctrlrange="-3.14 3.14" joint="upperarm_roll_joint" kp="100" name="upperarm_roll_joint"></position>
-		<position ctrllimited="true" ctrlrange="-2.251 2.251" joint="elbow_flex_joint" kp="100" name="elbow_flex_joint"></position>
-		<position ctrllimited="true" ctrlrange="-3.14 3.14" joint="forearm_roll_joint" kp="10" name="forearm_roll_joint"></position>
-		<position ctrllimited="true" ctrlrange="-2.16 2.16" joint="wrist_flex_joint" kp="100" name="wrist_flex_joint"></position>
-		<position ctrllimited="true" ctrlrange="-3.14 3.14" joint="wrist_roll_joint" kp="100" name="wrist_roll_joint"></position>
+    <actuator>
+		<position ctrllimited="true" ctrlrange="-1.6056 1.6056" joint="shoulder_pan_joint" kp="403.256" name="shoulder_pan_joint"></position>
+		<position ctrllimited="true" ctrlrange="-1.221 1.518" joint="shoulder_lift_joint" kp="6510.31" name="shoulder_lift_joint"></position>
+		<position ctrllimited="true" ctrlrange="-3.14 3.14" joint="upperarm_roll_joint" kp="412.222" name="upperarm_roll_joint"></position>
+		<position ctrllimited="true" ctrlrange="-2.251 2.251" joint="elbow_flex_joint" kp="20654.9" name="elbow_flex_joint"></position>
+		<position ctrllimited="true" ctrlrange="-3.14 3.14" joint="forearm_roll_joint" kp="32.4116" name="forearm_roll_joint"></position>
+		<position ctrllimited="true" ctrlrange="-2.16 2.16" joint="wrist_flex_joint" kp="1000" name="wrist_flex_joint"></position>
+		<position ctrllimited="true" ctrlrange="-3.14 3.14" joint="wrist_roll_joint" kp="432.743" name="wrist_roll_joint"></position>
 		<position ctrllimited="true" ctrlrange="0 0.04" joint="l_gripper_finger_joint" kp="10000" name="l_gripper_finger_joint" user="1"></position>
 		<position ctrllimited="true" ctrlrange="0 0.04" joint="r_gripper_finger_joint" kp="10000" name="r_gripper_finger_joint" user="1"></position>
 	</actuator>

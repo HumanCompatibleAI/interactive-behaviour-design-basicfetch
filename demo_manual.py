@@ -11,7 +11,7 @@ readline
 
 register()
 env = gym.make('FetchBasic-v0').unwrapped  # unwrap past TimeLimit
-env.unwrapped.reward_func = reward_function_dict['goal']['up']
+env.unwrapped.reward_func = reward_function_dict['dummy']
 np.set_printoptions(2)
 print(env.get_ctrl_names())
 while True:
