@@ -69,7 +69,7 @@ def construct_reward_function():
 
 
 def make_env():
-    env = gym.make(f'FetchBasic-v0')
+    env = gym.make(f'FetchBasicDelta-v0')
     env.unwrapped.reward_func = construct_reward_function()
     if first_env_semaphore.acquire(timeout=0):
         env = Monitor(env, video_callable=lambda n: n % 5 == 0, directory=logger.get_dir())
