@@ -10,7 +10,7 @@ from reward_functions import reward_function_dict
 
 
 class FetchEnvBasic(RobotEnv, EzPickle):
-    def __init__(self):
+    def __init__(self, delta_control):
         model_path = os.path.join(os.path.dirname(__file__), 'mujoco-py/xmls/fetch/main.xml')
         RobotEnv.__init__(self,
                           model_path=model_path,
@@ -19,6 +19,8 @@ class FetchEnvBasic(RobotEnv, EzPickle):
                           initial_qpos=None)
         EzPickle.__init__(self)
         self.reward_func = reward_function_dict['dummy']
+        self.delta_control = delta_control
+        self._action = np.zeros(self.action_space.shape)
 
     def get_ctrl_names(self):
         return self.sim.model.actuator_names
@@ -50,6 +52,12 @@ class FetchEnvBasic(RobotEnv, EzPickle):
 
     def _set_action(self, action):
         assert action.shape == (8,)
+        if self.delta_control:
+            action_delta = action / 40
+            action_delta[-1] *= 40  # move the gripper fingers faster
+            self._action += action_delta
+            self._action = np.clip(self._action, self.action_space.low, self.action_space.high)
+            action = self._action
         action = np.concatenate([action, [action[-1]]])  # control the fingers together
         ctrlrange = self.sim.model.actuator_ctrlrange
         actuation_range = (ctrlrange[:, 1] - ctrlrange[:, 0]) / 2.
@@ -94,8 +102,8 @@ class StartWithExplore(Wrapper):
         return self.env.step(action)
 
 
-def make_env():
-    env = FetchEnvBasic()
+def make_env(delta=False):
+    env = FetchEnvBasic(delta)
     env = FlattenDictWrapper(env, ['observation'])
     env = StartWithExplore(env)
     return env
@@ -105,5 +113,10 @@ def register():
     gym_register(
         id=f'FetchBasic-v0',
         entry_point=make_env,
+        max_episode_steps=250
+    )
+    gym_register(
+        id=f'FetchBasicDelta-v0',
+        entry_point=lambda: make_env(delta=True),
         max_episode_steps=250
     )

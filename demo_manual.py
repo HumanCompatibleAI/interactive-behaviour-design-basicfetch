@@ -10,7 +10,7 @@ from reward_functions import reward_function_dict
 readline
 
 register()
-env = gym.make('FetchBasic-v0').unwrapped  # unwrap past TimeLimit
+env = gym.make('FetchBasicDelta-v0').unwrapped  # unwrap past TimeLimit
 env.unwrapped.reward_func = reward_function_dict['dummy']
 np.set_printoptions(2)
 print(env.get_ctrl_names())
