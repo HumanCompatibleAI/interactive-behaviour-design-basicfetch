@@ -1,15 +1,8 @@
-import os
-import random
-if random.random() < 0.5:
-    d = '0'
-else:
-    d = '1'
-os.environ['CUDA_VISIBLE_DEVICES'] = d
-
 import argparse
 import multiprocessing
 import operator
 import os
+import random
 import subprocess
 import sys
 from functools import reduce
@@ -23,6 +16,12 @@ import basicfetch
 from baselines import logger
 from baselines.run import main as baselines_run_main
 from reward_functions import reward_function_dict
+
+if random.random() < 0.5:
+    d = '0'
+else:
+    d = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = d
 
 
 def get_git_rev():
