@@ -17,11 +17,12 @@ from baselines import logger
 from baselines.run import main as baselines_run_main
 from reward_functions import reward_function_dict
 
-if random.random() < 0.5:
-    d = '0'
-else:
-    d = '1'
-os.environ['CUDA_VISIBLE_DEVICES'] = d
+if 'CUDA_VISIBLE_DEVICES' not in os.environ:
+    if random.random() < 0.5:
+        d = '0'
+    else:
+        d = '1'
+    os.environ['CUDA_VISIBLE_DEVICES'] = d
 
 
 def get_git_rev():
