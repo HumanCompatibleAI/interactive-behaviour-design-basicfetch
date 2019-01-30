@@ -113,10 +113,10 @@ def register():
     gym_register(
         id=f'FetchBasic-v0',
         entry_point=make_env,
-        max_episode_steps=250
+        max_episode_steps=10
     )
     gym_register(
         id=f'FetchBasicDelta-v0',
         entry_point=lambda: make_env(delta=True),
-        max_episode_steps=250
+        max_episode_steps=10
     )
