@@ -7,7 +7,7 @@ from gym.envs.robotics.robot_env import RobotEnv
 from gym.utils import EzPickle
 from gym.wrappers import FlattenDictWrapper
 
-from reward_functions import reward_function_dict
+from basicfetch.reward_functions import reward_function_dict
 
 
 class FetchEnvBasic(RobotEnv, EzPickle):
@@ -18,7 +18,7 @@ class FetchEnvBasic(RobotEnv, EzPickle):
                           n_substeps=20,  # copied from FetchEnv
                           n_actions=8,  # 8 actuators
                           initial_qpos=None)
-        EzPickle.__init__(self)
+        EzPickle.__init__(self, delta_control)
         self.delta_control = delta_control
         self.reward_func = reward_function_dict['dummy']
         self.random_initial_gripper_position = True
