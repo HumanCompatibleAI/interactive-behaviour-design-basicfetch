@@ -18,7 +18,7 @@ parser.add_argument('name')
 args = parser.parse_args()
 
 basicfetch.register()
-env_name = 'FetchBasic-v0'
+env_name = 'FetchBasicDelta-v0'
 baselines.run._game_envs['robotics'].add(env_name)
 arg_str = f"--alg=ppo2 --env={env_name} --num_env 1 --num_timesteps 0 --load_path {args.in_model}"
 sys.argv = arg_str.split(" ")
